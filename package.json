@@ -1,0 +1,12 @@
+{
+  "name": "claude-timed",
+  "version": "1.0.0",
+  "description": "Track time spent during Claude Code sessions: idle, typing, and agent work",
+  "type": "module",
+  "bin": {
+    "claude-timed": "./bin/claude-timed.mjs"
+  },
+  "dependencies": {
+    "node-pty": "^1.1.0"
+  }
+}
