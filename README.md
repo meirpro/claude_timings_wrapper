@@ -116,6 +116,29 @@ claude-timed --uninstall-hook
 claude-timed --timing-help
 ```
 
+## Completion sound (optional)
+
+When the agent finishes and is waiting for your input, `claude-timed` can play a short notification sound (`complete.mp3` in the project root). This is entirely optional — if the sound file is missing or no supported player is installed, no sound plays and no errors are shown.
+
+### Native Linux
+
+Install any one of the following MP3-capable players:
+
+| Player | Install (Debian/Ubuntu) | Install (Fedora) | Install (Arch) |
+|--------|------------------------|-------------------|-----------------|
+| `mpv` (recommended) | `sudo apt install mpv` | `sudo dnf install mpv` | `sudo pacman -S mpv` |
+| `mpg123` | `sudo apt install mpg123` | `sudo dnf install mpg123` | `sudo pacman -S mpg123` |
+| `mpg321` | `sudo apt install mpg321` | — | — |
+| `ffplay` (part of ffmpeg) | `sudo apt install ffmpeg` | `sudo dnf install ffmpeg` | `sudo pacman -S ffmpeg` |
+
+The first available player from the list above is used. Detection happens once on the first agent completion.
+
+### WSL2
+
+If none of the native Linux players above are installed, the wrapper falls back to PowerShell's `System.Windows.Media.MediaPlayer`, which is available out of the box on any WSL2 system with access to `powershell.exe`. No additional Windows-side installation is required.
+
+If you prefer lower latency, install one of the native Linux players listed above. With [WSLg](https://github.com/microsoft/wslg) (enabled by default on Windows 11), native Linux audio works transparently inside WSL2.
+
 ## Data storage
 
 Session data is stored as JSONL files in `~/.claude/timings/`:
@@ -144,6 +167,7 @@ Each file contains one JSON object per line:
 ```
 claude_timings_wrapper/
 ├── package.json
+├── complete.mp3                   # Optional completion notification sound
 ├── bin/
 │   └── claude-timed.mjs          # Entry point, flag parsing
 ├── lib/
@@ -152,6 +176,7 @@ claude_timings_wrapper/
 │   ├── timing-log.mjs            # Per-session JSONL read/write
 │   ├── stats.mjs                 # --stats display with date filtering
 │   ├── title-bar.mjs             # Terminal title bar timer
+│   ├── sound.mjs                 # Optional completion sound playback
 │   └── hook-installer.mjs        # Install/uninstall Claude Code hooks
 └── hooks/
     ├── claude-timing-stop.sh     # Stop hook script
