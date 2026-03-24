@@ -1,5 +1,12 @@
 #!/usr/bin/env node
 
+import { readFileSync } from 'fs';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const pkg = JSON.parse(readFileSync(join(__dirname, '..', 'package.json'), 'utf8'));
+
 const args = process.argv.slice(2);
 
 // Handle wrapper-specific flags
@@ -16,19 +23,7 @@ if (args[0] === '--uninstall-hook') {
 }
 
 if (args[0] === '--version') {
-  const { getVersion } = await import('../lib/update-checker.mjs');
-  console.log(`claude-timed v${getVersion()}`);
-  process.exit(0);
-}
-
-if (args[0] === '--check-update') {
-  const { checkForUpdate, formatUpdateNotice, getVersion } = await import('../lib/update-checker.mjs');
-  const info = await checkForUpdate({ force: true });
-  if (info) {
-    console.log(formatUpdateNotice(info));
-  } else {
-    console.log(`claude-timed v${getVersion()} is up to date.`);
-  }
+  console.log(`claude-timed v${pkg.version}`);
   process.exit(0);
 }
 
@@ -39,8 +34,7 @@ if (args[0] === '--stats') {
 }
 
 if (args[0] === '--timing-help') {
-  const { getVersion } = await import('../lib/update-checker.mjs');
-  console.log(`claude-timed v${getVersion()} — Claude Code session timing wrapper
+  console.log(`claude-timed v${pkg.version} — Claude Code session timing wrapper
 
 Usage:
   claude-timed [claude args...]       Start Claude with timing
@@ -55,20 +49,8 @@ Usage:
   claude-timed --stats all            All sessions
   claude-timed --stats [range] --project NAME   Filter by project name
   claude-timed --version              Show version
-  claude-timed --check-update         Check for updates
   claude-timed --timing-help          Show this help`);
   process.exit(0);
-}
-
-// Auto update check (cached, at most once per 24h)
-try {
-  const { checkForUpdate, formatUpdateNotice } = await import('../lib/update-checker.mjs');
-  const updateInfo = await checkForUpdate();
-  if (updateInfo) {
-    process.stderr.write(formatUpdateNotice(updateInfo));
-  }
-} catch {
-  // Never let update check prevent normal operation
 }
 
 // Default: launch the wrapper with all args passed to claude
