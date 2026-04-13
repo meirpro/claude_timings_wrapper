@@ -10,5 +10,8 @@ fi
 
 TMPFILE="/tmp/claude_timing_start_${CLAUDE_TIMING_SESSION}"
 
-# Write current epoch milliseconds
-date +%s%3N > "$TMPFILE"
+# Write current epoch milliseconds.
+# Use python3 because BSD `date` (macOS) does not support the %N format
+# specifier — `date +%s%3N` would write literal "3N" characters and the
+# wrapper would parse the result with a ~100× scale error.
+python3 -c 'import time; print(int(time.time()*1000))' > "$TMPFILE"
