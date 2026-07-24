@@ -1,0 +1,10 @@
+[
+  {
+    "version": "1.0.1",
+    "notes": "Fix startup crash and stale hook path after the repo moved from ~/Documents/GitHub to ~/git. node-pty's prebuilt spawn-helper needs +x (npm 11 blocks the postinstall that would chmod it), and the hook-timestamp probe hardcoded the old path.",
+    "steps": [
+      "git pull",
+      "chmod +x node_modules/node-pty/prebuilds/darwin-*/spawn-helper"
+    ]
+  }
+]
